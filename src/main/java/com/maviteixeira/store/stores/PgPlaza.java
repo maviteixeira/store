@@ -1,6 +1,7 @@
 package com.maviteixeira.store.stores;
 
 import com.jcabi.jdbc.JdbcSession;
+import com.maviteixeira.store.shared.exceptions.AppException;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -9,7 +10,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class PgPlaza implements Stores {
                 .set(ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT))
                 .execute();
         } catch (SQLException ex) {
-            return new EmptyStore();
+            throw new AppException(ex);
         }
         return new PgStore(id, this.dataSource);
     }
@@ -87,8 +87,7 @@ public class PgPlaza implements Stores {
                     }
                 );
         } catch (SQLException ex) {
-            //Log
-            return Collections.emptyIterator();
+            throw new AppException(ex);
         }
     }
 }

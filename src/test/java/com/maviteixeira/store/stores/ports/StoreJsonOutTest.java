@@ -4,7 +4,7 @@ import com.maviteixeira.store.stores.CompactAddress;
 import com.maviteixeira.store.stores.EmptyAddress;
 import com.maviteixeira.store.stores.EmptyName;
 import com.maviteixeira.store.stores.EmptyStoreId;
-import com.maviteixeira.store.stores.FullName;
+import com.maviteixeira.store.stores.SimpleName;
 import com.maviteixeira.store.stores.PgStoreId;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class StoreJsonOutTest {
         String id = UUID.randomUUID().toString();
         final JsonObject json = new StoreJsonOut().print(
             new PgStoreId(id),
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Endereco")
         );
         Assert.assertEquals(id, json.getString("id"));

@@ -13,7 +13,7 @@ public class PgPlazaTest extends IntegrationTests {
     @Test
     public void givenStoreDataWhenSaveShouldBeSaved() {
         Store store = new PgPlaza(dataSource).create(
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Address Street")
         );
         Map<String, String> printed = store.print(new StoreMapOut());
@@ -26,7 +26,7 @@ public class PgPlazaTest extends IntegrationTests {
     public void givenStoreDataWhenSaveShouldBeFoundSearchingById() {
         Stores plaza = new PgPlaza(dataSource);
         Store store = plaza.create(
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Address Street")
         );
         Map<String, String> printed = store.print(new StoreMapOut());
@@ -42,11 +42,11 @@ public class PgPlazaTest extends IntegrationTests {
     public void givenSomeStoresWhenIterateShoulbBeAllReturned() {
         Stores plaza = new PgPlaza(dataSource);
         plaza.create(
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Address Street")
         );
         plaza.create(
-            new FullName("Joao"),
+            new SimpleName("Joao"),
             new CompactAddress("Other Address Street")
         );
         int numberOfStores = 0;
@@ -60,14 +60,14 @@ public class PgPlazaTest extends IntegrationTests {
     public void givenSomeStoresWhenFilteredShouldReturnFilteredStores() {
         final Stores plaza = new PgPlaza(dataSource);
         plaza.create(
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Address Street")
         );
         plaza.create(
-            new FullName("Maria"),
+            new SimpleName("Maria"),
             new CompactAddress("Other Address Street")
         );
-        Stores filteredPlaza = plaza.filter(new FullName("M"), new EmptyAddress());
+        Stores filteredPlaza = plaza.filter(new SimpleName("M"), new EmptyAddress());
         for (Store store : filteredPlaza) {
             Map<String, String> filtered = store.print(new StoreMapOut());
             Assert.assertEquals("Maria", filtered.get("name"));
@@ -79,11 +79,11 @@ public class PgPlazaTest extends IntegrationTests {
     public void givenSomeStoresWhenNoFilterIsAppliedShouldReturnAllStores() {
         final Stores plaza = new PgPlaza(dataSource);
         plaza.create(
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Address Street")
         );
         plaza.create(
-            new FullName("Maria"),
+            new SimpleName("Maria"),
             new CompactAddress("Other Address Street")
         );
         Stores filteredPlaza = plaza.filter(new EmptyName(), new EmptyAddress());

@@ -29,8 +29,8 @@ class FilteredStores implements Stores {
 
     @Override
     public Stores filter(Name name, Address address) {
-        filters.put("name", name.asString());
-        filters.put("address", address.asString());
+        filters.put("name", name.asText().asString());
+        filters.put("address", address.asText().asString());
         return new FilteredStores(dataSource, this, filters);
     }
 

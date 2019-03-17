@@ -35,8 +35,8 @@ public class PgPlaza implements Stores {
             new JdbcSession(dataSource)
                 .sql(SQL)
                 .set(id.value())
-                .set(name.asString())
-                .set(address.asString())
+                .set(name.asText().asString())
+                .set(address.asText().asString())
                 .set(ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT))
                 .execute();
         } catch (SQLException ex) {
@@ -48,8 +48,8 @@ public class PgPlaza implements Stores {
     @Override
     public Stores filter(final Name name, final Address address) {
         Map<String, String> filter = new HashMap<>();
-        filter.put("name", name.asString());
-        filter.put("address", address.asString());
+        filter.put("name", name.asText().asString());
+        filter.put("address", address.asText().asString());
         return new FilteredStores(dataSource, this, filter);
     }
 

@@ -12,12 +12,12 @@ public class PgStoreTest extends IntegrationTests {
     @Test
     public void givenStoreWhenChangedNameAndAddressThenStoreShouldBeChanged() {
         Store store = new PgPlaza(dataSource).create(
-            new FullName("Jose"),
+            new SimpleName("Jose"),
             new CompactAddress("Address Street")
         );
         store.moveAndRename(
             new CompactAddress("Changed Address"),
-            new FullName("Joao")
+            new SimpleName("Joao")
         );
         Map<String, String> printed = store.print(new StoreMapOut());
         Assert.assertEquals("Joao", printed.get("name"));

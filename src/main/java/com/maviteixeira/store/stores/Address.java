@@ -1,7 +1,9 @@
 package com.maviteixeira.store.stores;
 
+import com.maviteixeira.store.shared.Text;
+
 public interface Address {
 
-    String asString();
+    Text asText();
 
 }

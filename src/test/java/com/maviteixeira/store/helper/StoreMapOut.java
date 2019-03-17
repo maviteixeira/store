@@ -14,8 +14,8 @@ public class StoreMapOut implements Store.Out<Map<String, String>> {
     public Map<String, String> print(StoreId id, Name name, Address address) {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("id", id.value());
-        attributes.put("name", name.asString());
-        attributes.put("address", address.asString());
+        attributes.put("name", name.asText().asString());
+        attributes.put("address", address.asText().asString());
         return attributes;
     }
 

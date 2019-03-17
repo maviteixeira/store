@@ -24,8 +24,8 @@ public class PgStore implements Store {
         try {
             new JdbcSession(dataSource)
                 .sql(SQL)
-                .set(name.asString())
-                .set(address.asString())
+                .set(name.asText().asString())
+                .set(address.asText().asString())
                 .set(id.value())
                 .update(Outcome.VOID);
         } catch (SQLException ex) {
@@ -43,7 +43,7 @@ public class PgStore implements Store {
                         resultSet.next();
                         return out.print(
                             this.id,
-                            new FullName(resultSet.getString(1)),
+                            new SimpleName(resultSet.getString(1)),
                             new CompactAddress(resultSet.getString(2))
                         );
                     }

@@ -15,8 +15,8 @@ public class StoreJsonOut implements Store.Out<JsonObject> {
     public JsonObject print(StoreId id, Name name, Address address) {
         JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
         jsonBuilder.add("id", id.value());
-        jsonBuilder.add("fullName", name.asString());
-        jsonBuilder.add("address", address.asString());
+        jsonBuilder.add("fullName", name.asText().asString());
+        jsonBuilder.add("address", address.asText().asString());
         return jsonBuilder.build();
     }
 }

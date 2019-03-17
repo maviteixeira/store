@@ -1,10 +1,10 @@
 package com.maviteixeira.store.stores.ports;
 
 import com.maviteixeira.store.stores.CompactAddress;
-import com.maviteixeira.store.stores.FullName;
 import com.maviteixeira.store.stores.PgPlaza;
 import com.maviteixeira.store.stores.PgStore;
 import com.maviteixeira.store.stores.PgStoreId;
+import com.maviteixeira.store.stores.SimpleName;
 import com.maviteixeira.store.stores.Store;
 import com.maviteixeira.store.stores.Stores;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class StoresController {
         Stores filteredStores =
             new PgPlaza(dataSource)
                 .filter(
-                    new FullName(name),
+                    new SimpleName(name),
                     new CompactAddress(address)
                 );
         return new ResponseEntity<>(filteredStores.print(new StoresJsonOut()).toString(), HttpStatus.OK);
@@ -46,7 +46,7 @@ public class StoresController {
     public ResponseEntity createStore(@RequestBody CreateStoreVO createStoreVO) {
         Store store = new PgPlaza(dataSource)
             .create(
-                new FullName(createStoreVO.getName()),
+                new SimpleName(createStoreVO.getName()),
                 new CompactAddress(createStoreVO.getAddress())
             );
         return new ResponseEntity<>(store.print(new StoreJsonOut()).toString(), HttpStatus.OK);
@@ -63,7 +63,7 @@ public class StoresController {
         );
         store.moveAndRename(
             new CompactAddress(updateStoreVO.getAddress()),
-            new FullName(updateStoreVO.getName())
+            new SimpleName(updateStoreVO.getName())
         );
         return new ResponseEntity<>(store.print(new StoreJsonOut()).toString(), HttpStatus.OK);
     }

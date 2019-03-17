@@ -26,5 +26,6 @@ Messing around with OOP and architecture to learn and apply some concepts.
 - Docker (WIP)
 - Terraform
 - Security
+- Postman Collection
 
 Before running the application you need to execute docker-compose up and run the schema.sql in the database.

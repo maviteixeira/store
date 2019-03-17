@@ -1,0 +1,8 @@
+CREATE TABLE stores
+(
+  id VARCHAR(60) NOT NULL,
+  fullName VARCHAR(100) NOT NULL,
+  address  VARCHAR(255) NOT NULL,
+  creation VARCHAR(60) NOT NULL,
+  PRIMARY KEY (id)
+);

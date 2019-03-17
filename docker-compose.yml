@@ -1,0 +1,11 @@
+postgres:
+  restart: always
+  image: postgres
+  ports:
+    - "5432:5432"
+  environment:
+    - DEBUG=false
+    - POSTGRES_USER=user
+    - POSTGRESS_PASSWORD=password
+  volumes:
+    - /srv/docker/postgresql:/var/lib/postgresql

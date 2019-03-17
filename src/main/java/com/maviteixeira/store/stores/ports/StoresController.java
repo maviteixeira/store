@@ -1,12 +1,15 @@
 package com.maviteixeira.store.stores.ports;
 
 import com.maviteixeira.store.stores.CompactAddress;
+import com.maviteixeira.store.stores.LoggedStore;
 import com.maviteixeira.store.stores.PgPlaza;
 import com.maviteixeira.store.stores.PgStore;
 import com.maviteixeira.store.stores.PgStoreId;
 import com.maviteixeira.store.stores.SimpleName;
 import com.maviteixeira.store.stores.Store;
 import com.maviteixeira.store.stores.Stores;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,7 @@ import javax.sql.DataSource;
 public class StoresController {
 
     private final DataSource dataSource;
+    private static final Logger logger = LoggerFactory.getLogger(StoresController.class);
 
     public StoresController(final DataSource dataSource) {
         this.dataSource = dataSource;
@@ -57,9 +61,11 @@ public class StoresController {
         method = RequestMethod.PUT)
     public ResponseEntity updateStore(@PathVariable("id") final String id,
                                       @RequestBody UpdateStoreVO updateStoreVO) {
-        Store store = new PgStore(
-            new PgStoreId(id),
-            dataSource
+        Store store = new LoggedStore(
+            new PgStore(
+                new PgStoreId(id),
+                dataSource
+            ), logger
         );
         store.moveAndRename(
             new CompactAddress(updateStoreVO.getAddress()),
@@ -73,9 +79,11 @@ public class StoresController {
         method = RequestMethod.GET)
     public ResponseEntity getStore(@PathVariable("id") final String id) {
         return new ResponseEntity<>(
-            new PgStore(
-                new PgStoreId(id),
-                this.dataSource
+            new LoggedStore(
+                new PgStore(
+                    new PgStoreId(id),
+                    this.dataSource
+                ), logger
             ).print(new StoreJsonOut()).toString(),
             HttpStatus.OK
         );

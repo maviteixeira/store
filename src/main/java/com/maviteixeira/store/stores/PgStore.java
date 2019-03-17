@@ -2,6 +2,8 @@ package com.maviteixeira.store.stores;
 
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Outcome;
+import com.maviteixeira.store.shared.exceptions.AppException;
+import com.maviteixeira.store.shared.exceptions.UnprintableException;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -29,7 +31,7 @@ public class PgStore implements Store {
                 .set(id.value())
                 .update(Outcome.VOID);
         } catch (SQLException ex) {
-            //Log
+            throw new AppException(ex);
         }
     }
 
@@ -49,12 +51,7 @@ public class PgStore implements Store {
                     }
                 );
         } catch (SQLException ex) {
-            //Log
-            return out.print(
-                new EmptyStoreId(),
-                new EmptyName(),
-                new EmptyAddress()
-            );
+            throw new UnprintableException(ex);
         }
     }
 }

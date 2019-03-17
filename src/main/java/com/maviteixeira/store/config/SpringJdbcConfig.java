@@ -1,5 +1,6 @@
 package com.maviteixeira.store.config;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -17,6 +18,15 @@ public class SpringJdbcConfig {
         dataSource.setUsername("user");
         dataSource.setPassword("password");
         return dataSource;
+    }
+
+    @Bean
+    public FilterRegistrationBean loggingFilter() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new AuthenticationFilter());
+        registrationBean.addUrlPatterns("/*/");
+        registrationBean.setOrder(1);
+        return registrationBean;
     }
 
 }

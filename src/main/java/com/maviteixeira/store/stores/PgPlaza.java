@@ -1,19 +1,13 @@
 package com.maviteixeira.store.stores;
 
-import com.jcabi.jdbc.JdbcSession;
-import com.maviteixeira.store.shared.exceptions.AppException;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PgPlaza implements Stores {
 
@@ -28,20 +22,17 @@ public class PgPlaza implements Stores {
     public Store create(final Name name, final Address address) {
         StoreId id = new PgStoreId(UUID.randomUUID());
 
+        JdbcOperations jdbc = new JdbcTemplate(dataSource);
         String SQL = " INSERT INTO Stores "
             + " (id, fullName, address, creation) VALUES "
             + " (?,?,?,?) ";
-        try {
-            new JdbcSession(dataSource)
-                .sql(SQL)
-                .set(id.value())
-                .set(name.asText().asString())
-                .set(address.asText().asString())
-                .set(ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT))
-                .execute();
-        } catch (SQLException ex) {
-            throw new AppException(ex);
-        }
+
+        jdbc.update(SQL,
+                id.value(),
+                name.asText().asString(),
+                address.asText().asString(),
+                ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)
+        );
         return new PgStore(id, this.dataSource);
     }
 
@@ -68,26 +59,16 @@ public class PgPlaza implements Stores {
 
     @Override
     public Iterator<Store> iterator() {
-        try {
-            return new JdbcSession(dataSource)
-                .sql("SELECT id FROM stores")
-                .select((resultSet, statement) -> {
-                        final Collection<Store> stores = new ArrayList<>();
-                        while (resultSet.next()) {
-                            stores.add(
-                                new PgStore(
-                                    new PgStoreId(
-                                        resultSet.getString(1)
-                                    ),
-                                    this.dataSource
-                                )
-                            );
-                        }
-                        return stores.iterator();
-                    }
-                );
-        } catch (SQLException ex) {
-            throw new AppException(ex);
+        JdbcOperations jdbc = new JdbcTemplate(dataSource);
+        List<Store> stores = new ArrayList<>();
+        for(Map<String, Object> rows : jdbc.queryForList("SELECT id FROM stores")){
+            stores.add(new PgStore(
+                new PgStoreId(
+                    rows.get("id").toString()
+                ), this.dataSource
+                )
+            );
         }
+        return stores.iterator();
     }
 }

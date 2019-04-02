@@ -1,9 +1,8 @@
 package com.maviteixeira.store.stores;
 
-import com.jcabi.jdbc.JdbcSession;
-import com.jcabi.jdbc.Outcome;
-import com.maviteixeira.store.shared.exceptions.AppException;
 import com.maviteixeira.store.shared.exceptions.UnprintableException;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -23,35 +22,29 @@ public class PgStore implements Store {
         String SQL = " UPDATE Stores "
             + " SET fullName = ?, address = ? "
             + " WHERE id = ? ";
-        try {
-            new JdbcSession(dataSource)
-                .sql(SQL)
-                .set(name.asText().asString())
-                .set(address.asText().asString())
-                .set(id.value())
-                .update(Outcome.VOID);
-        } catch (SQLException ex) {
-            throw new AppException(ex);
-        }
+
+        JdbcOperations jdbc = new JdbcTemplate(dataSource);
+        jdbc.update(SQL,
+            name.asText().asString(),
+            address.asText().asString(),
+            id.value()
+        );
     }
 
     @Override
     public <T> T print(Out<T> out) {
-        try {
-            return new JdbcSession(dataSource)
-                .sql("SELECT fullName, address FROM stores WHERE id = ?")
-                .set(this.id.value())
-                .select((resultSet, statement) -> {
-                        resultSet.next();
-                        return out.print(
-                            this.id,
-                            new SimpleName(resultSet.getString(1)),
-                            new CompactAddress(resultSet.getString(2))
-                        );
-                    }
+        String SQL = "SELECT fullName, address FROM stores WHERE id = ?";
+        JdbcOperations jdbc = new JdbcTemplate(dataSource);
+        return jdbc.queryForObject(SQL, new Object[] { id.value() }, (result, i) -> {
+            try {
+                return out.print(
+                    id,
+                    new SimpleName(result.getString("fullName")),
+                    new CompactAddress(result.getString("address"))
                 );
-        } catch (SQLException ex) {
-            throw new UnprintableException(ex);
-        }
+            } catch (SQLException e) {
+                throw new UnprintableException("Cannot print");
+            }
+        });
     }
 }

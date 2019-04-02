@@ -86,9 +86,8 @@ public class PgPlazaTest extends IntegrationTests {
             new SimpleName("Maria"),
             new CompactAddress("Other Address Street")
         );
-        Stores filteredPlaza = plaza.filter(new EmptyName(), new EmptyAddress());
         int numberOfStores = 0;
-        for (Store store : filteredPlaza) {
+        for (Store ignored : plaza) {
             numberOfStores++;
         }
         Assert.assertEquals(2, numberOfStores, 0);

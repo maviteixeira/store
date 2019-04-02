@@ -1,14 +1,10 @@
 package com.maviteixeira.store.stores;
 
-import com.jcabi.jdbc.JdbcSession;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 class FilteredStores implements Stores {
 
@@ -46,36 +42,25 @@ class FilteredStores implements Stores {
 
     @Override
     public Iterator<Store> iterator() {
-        StringBuffer sql = new StringBuffer(" SELECT id FROM stores WHERE 1=1 ");
-        JdbcSession jdbc = new JdbcSession(dataSource);
+        StringBuffer SQL = new StringBuffer(" SELECT id FROM stores WHERE 1=1 ");
+        JdbcOperations jdbc = new JdbcTemplate(dataSource);
         if (filters.get("name") != null && !filters.get("name").equals("")) {
-            sql.append(" AND fullName like ? ");
-            jdbc.set("%" + filters.get("name") + "%");
+            SQL.append(" AND fullName like '%").append(filters.get("name")).append("%' ");
         }
         if (filters.get("address") != null && !filters.get("address").equals("")) {
-            sql.append(" AND address like '?' ");
-            jdbc.set("%" + filters.get("name") + "%");
+            SQL.append(" AND address like '%").append(filters.get("address")).append("%' ");
         }
-        jdbc.sql(sql.toString());
-        try {
-            return jdbc.select((resultSet, statement) -> {
-                    final Collection<Store> stores = new ArrayList<>();
-                    while (resultSet.next()) {
-                        stores.add(
-                            new PgStore(
-                                new PgStoreId(
-                                    resultSet.getString(1)
-                                ),
-                                this.dataSource
-                            )
-                        );
-                    }
-                    return stores.iterator();
-                }
+
+        List<Store> stores = new ArrayList<>();
+        for(Map<String, Object> rows : jdbc.queryForList(SQL.toString())){
+            stores.add(
+                new PgStore(
+                    new PgStoreId(
+                        rows.get("id").toString()
+                    ), this.dataSource
+                )
             );
-        } catch (SQLException ex) {
-            //Log
-            return Collections.emptyIterator();
         }
+        return stores.iterator();
     }
 }

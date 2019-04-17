@@ -42,7 +42,7 @@ class FilteredStores implements Stores {
 
     @Override
     public Iterator<Store> iterator() {
-        StringBuffer SQL = new StringBuffer(" SELECT id FROM stores WHERE 1=1 ");
+        StringBuilder SQL = new StringBuilder(" SELECT id FROM stores WHERE 1=1 ");
         JdbcOperations jdbc = new JdbcTemplate(dataSource);
         if (filters.get("name") != null && !filters.get("name").equals("")) {
             SQL.append(" AND fullName like '%").append(filters.get("name")).append("%' ");

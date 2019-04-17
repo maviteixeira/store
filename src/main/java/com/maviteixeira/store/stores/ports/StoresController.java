@@ -12,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,8 +34,7 @@ public class StoresController {
         this.dataSource = dataSource;
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-        produces = {"application/json"})
+    @GetMapping(produces = {"application/json"})
     public ResponseEntity getStores(@RequestParam(required = false) final String name,
                                     @RequestParam(required = false) final String address) {
         Stores filteredStores =
@@ -45,8 +46,7 @@ public class StoresController {
         return new ResponseEntity<>(filteredStores.print(new StoresJsonOut()).toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST,
-        produces = {"application/json"})
+    @PostMapping(produces = {"application/json"})
     public ResponseEntity createStore(@RequestBody CreateStoreVO createStoreVO) {
         Store store = new PgPlaza(dataSource)
             .create(
@@ -56,9 +56,8 @@ public class StoresController {
         return new ResponseEntity<>(store.print(new StoreJsonOut()).toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}",
-        produces = {"application/json"},
-        method = RequestMethod.PUT)
+    @PutMapping(value = "/{id}",
+        produces = {"application/json"})
     public ResponseEntity updateStore(@PathVariable("id") final String id,
                                       @RequestBody UpdateStoreVO updateStoreVO) {
         Store store = new LoggedStore(
@@ -74,9 +73,8 @@ public class StoresController {
         return new ResponseEntity<>(store.print(new StoreJsonOut()).toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}",
-        produces = {"application/json"},
-        method = RequestMethod.GET)
+    @GetMapping(value = "/{id}",
+        produces = {"application/json"})
     public ResponseEntity getStore(@PathVariable("id") final String id) {
         return new ResponseEntity<>(
             new LoggedStore(
